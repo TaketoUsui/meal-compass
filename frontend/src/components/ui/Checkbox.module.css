@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.label {
+  padding-left: var(--spacing-sm);
+  color: var(--color-dark-brown);
+  user-select: none; /* テキスト選択を無効化 */
+}
+
+/* 元のチェックボックスを非表示にする */
+.input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* カスタムチェックボックスの見た目を作成 */
+.label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-caramel);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-white);
+  vertical-align: middle;
+  margin-right: var(--spacing-sm);
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+/* チェックされた時のスタイル */
+.input:checked + .label::before {
+  background-color: var(--color-caramel);
+  border-color: var(--color-caramel);
+}
+
+/* チェックマークの作成 */
+.input:checked + .label::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 4px;
+  width: 6px;
+  height: 12px;
+  border: solid var(--color-white);
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+/* .container の中に .label::after を配置するために relative を設定 */
+.container {
+  position: relative;
+}
+
+.input:disabled + .label {
+  color: var(--color-gray-500);
+  cursor: not-allowed;
+}
+
+.input:disabled + .label::before {
+  background-color: var(--color-gray-100);
+  border-color: var(--color-gray-300);
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 
+      レスポンシブデザインに対応するため、viewportを設定します。
+      これにより、デバイスの画面幅に応じて表示が最適化されます。
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!--
+      publicディレクトリにファビコンを配置した場合の参照例です。
+      /favicon.ico は public ディレクトリのルートを指します。
+    -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>meal-compass</title>
+  </head>
+  <body>
+    <!-- 
+      このdiv要素が、Reactアプリケーション全体が描画される「ルート」となります。
+      src/main.tsx 内の ReactDOM.createRoot(document.getElementById('root')) が
+      この要素をターゲットにしています。
+    -->
+    <div id="root"></div>
+
+    <!--
+      ViteがこのJavaScriptファイルをアプリケーションのエントリーポイントとして読み込み、
+      コンパイルしてブラウザで実行します。
+      'type="module"' は、ES Modules構文を使用することを示します。
+    -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

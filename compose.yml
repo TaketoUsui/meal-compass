@@ -1,0 +1,95 @@
+# compose.yml (Compose Specification準拠)
+
+# services, networks, volumesなどのトップレベル要素から記述を開始します
+services:
+  #--------------------------------------------------------------------------
+  # バックエンド (Go / Gin) サービス
+  #--------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: meal-compass-backend
+    ports:
+      - "${GO_APP_PORT}:8080"
+    volumes:
+      - ./backend:/app
+    environment:
+      - GIN_MODE=${GIN_MODE}
+      - GO_APP_PORT=8080
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_DSN_PARAMS=${DB_DSN_PARAMS}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - meal-compass-net
+
+  #--------------------------------------------------------------------------
+  # フロントエンド (React / Vite) サービス
+  #--------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    container_name: meal-compass-frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend
+    networks:
+      - meal-compass-net
+
+  #--------------------------------------------------------------------------
+  # データベース (MySQL) サービス
+  #--------------------------------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: meal-compass-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_RANDOM_ROOT_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USER}", "-p ${DB_PASSWORD}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - meal-compass-net
+
+#--------------------------------------------------------------------------
+# ネットワーク定義
+#--------------------------------------------------------------------------
+networks:
+  meal-compass-net:
+    driver: bridge
+
+#--------------------------------------------------------------------------
+# ボリューム定義
+#--------------------------------------------------------------------------
+volumes:
+  mysql_data:
+    driver: local

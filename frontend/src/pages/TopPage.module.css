@@ -1,0 +1,61 @@
+.container {
+  width: 100%;
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.title {
+  text-align: center;
+  color: var(--color-dark-brown);
+  margin-bottom: var(--spacing-sm);
+}
+
+.description {
+  text-align: center;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-xl);
+}
+
+.selectionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--spacing-md);
+  background-color: var(--color-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-md);
+}
+
+.dayColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.dayHeader {
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-gray-100);
+}
+
+.mealCheckboxes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--spacing-xl);
+  gap: var(--spacing-md);
+}
+
+.error {
+  color: #d9534f; /* エラー用の赤色 */
+  font-weight: bold;
+}

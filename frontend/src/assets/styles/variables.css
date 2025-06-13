@@ -1,0 +1,60 @@
+:root {
+  /*
+   * Color Palette
+   * 仕様書で指定されたメインカラーを変数として定義します。
+   * 分かりやすいように、色味に基づいた名前を付けています。
+  */
+  --color-dark-brown: #4B352A;    /* 主なテキスト、ヘッダー背景など */
+  --color-caramel: #CA7842;      /* アクセント、ボタン、リンクなど */
+  --color-pistachio: #B2CD9C;    /* サブカラー、ハイライト、UI要素など */
+  --color-light-cream: #F0F2BD;   /* メインの背景色 */
+
+  /*
+   * Neutral Colors
+   * 白、黒、グレーなどの基本的な色も定義しておくと便利です。
+  */
+  --color-white: #FFFFFF;
+  --color-gray-100: #f8f9fa;
+  --color-gray-300: #dee2e6;
+  --color-gray-500: #adb5bd;
+  --color-gray-700: #495057;
+  --color-black: #212529;
+
+  /*
+   * Typography
+   * フォントファミリーやフォントサイズを定義します。
+  */
+  --font-family-sans-serif: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  --font-size-base: 16px;       /* 基本のフォントサイズ (1rem) */
+  --font-size-lg: 1.25rem;      /* 1.25 * 16px = 20px */
+  --font-size-md: 1rem;         /* 1 * 16px = 16px */
+  --font-size-sm: 0.875rem;     /* 0.875 * 16px = 14px */
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  /*
+   * Spacing
+   * 要素間の余白（margin, padding）を定義します。
+   * 4の倍数を基本単位とすると、デザインに一貫性が生まれます。
+  */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /*
+   * Layout
+   * コンテンツの最大幅やボーダーの角丸などを定義します。
+  */
+  --layout-max-width: 1024px;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+
+  /*
+   * Shadows
+   * 要素に立体感を与える影を定義します。
+  */
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
