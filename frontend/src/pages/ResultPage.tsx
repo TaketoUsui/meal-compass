@@ -4,7 +4,7 @@ import { useShoppingPlan } from '../hooks/useShoppingPlan';
 import { Checkbox } from '../components/ui/Checkbox';
 import { formatToJapaneseDate } from '../utils/dateFormatter';
 import styles from './ResultPage.module.css';
-import { Meal } from '../types';
+import { Meal, Ingredient } from '../types';
 
 export const ResultPage: React.FC = () => {
   const { shoppingPlanId: planIdFromUrl } = useParams<{ shoppingPlanId: string }>();
@@ -36,6 +36,18 @@ export const ResultPage: React.FC = () => {
       return acc;
     }, {});
   }, [meals]);
+
+  // 買い物リストの材料を種類(type)でグループ化する
+  const groupedIngredients = useMemo(() => {
+    return ingredients.reduce<Record<string, Ingredient[]>>((acc, ingredient) => {
+      const type = ingredient.type || 'その他';
+      if (!acc[type]) {
+        acc[type] = [];
+      }
+      acc[type].push(ingredient);
+      return acc;
+    }, {});
+  }, [ingredients]);
 
   if (isLoading) {
     return <div className={styles.status}>読み込んでいます...</div>;
@@ -74,17 +86,25 @@ export const ResultPage: React.FC = () => {
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>買い物リスト</h2>
         <div className={styles.ingredientList}>
-          {ingredients.map((ingredient) => (
-            <Checkbox
-              key={ingredient.id}
-              label={
-                <span className={ingredient.bought ? styles.boughtItem : ''}>
-                  {ingredient.name} ({ingredient.amount}{ingredient.unit})
-                </span>
-              }
-              checked={ingredient.bought}
-              onChange={() => toggleIngredientBought(ingredient.id, ingredient.bought)}
-            />
+          {/* グループ化されたオブジェクトを元に描画 */}
+          {Object.entries(groupedIngredients).map(([type, items]) => (
+            <div key={type} className={styles.ingredientGroup}>
+              <h3 className={styles.ingredientTypeTitle}>{type}</h3>
+              <div className={styles.ingredientItems}>
+                {items.map((ingredient) => (
+                  <Checkbox
+                    key={ingredient.id}
+                    label={
+                      <span className={ingredient.bought ? styles.boughtItem : ''}>
+                        {ingredient.name} ({ingredient.amount}{ingredient.unit})
+                      </span>
+                    }
+                    checked={ingredient.bought}
+                    onChange={() => toggleIngredientBought(ingredient.id, ingredient.bought)}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>
