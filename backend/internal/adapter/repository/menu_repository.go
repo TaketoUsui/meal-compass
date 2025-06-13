@@ -29,7 +29,7 @@ func (r *menuRepository) FindRandomMenus(ctx context.Context, count int) ([]*mod
 	err := r.db.WithContext(ctx).
 		Order("RAND()").
 		Limit(count).
-		Preload("MenuIngredientItems.Ingredient"). // レシピと食材情報も合わせて取得
+		Preload("MenuIngredientItems.Ingredient.IngredientType"). // レシピと食材情報も合わせて取得
 		Find(&menus).Error
 
 	if err != nil {
