@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useShoppingPlan } from '../hooks/useShoppingPlan';
+import { Button } from '../components/ui/Button';
 import { Checkbox } from '../components/ui/Checkbox';
 import { formatToJapaneseDate } from '../utils/dateFormatter';
 import styles from './ResultPage.module.css';
 import { Meal, Ingredient } from '../types';
 
 export const ResultPage: React.FC = () => {
+  const navigate = useNavigate();
   const { shoppingPlanId: planIdFromUrl } = useParams<{ shoppingPlanId: string }>();
   const {
     shoppingPlanId: planIdFromContext,
@@ -16,7 +18,14 @@ export const ResultPage: React.FC = () => {
     error,
     fetchPlanData,
     toggleIngredientBought,
+    clearPlan,
   } = useShoppingPlan();
+
+  useEffect(() => {
+    return () => {
+      clearPlan(); // コンポーネントがアンマウントされるときにContextの状態をクリア
+    }
+  }, [clearPlan]);
 
   useEffect(() => {
     // URLのIDが存在し、ContextのIDと異なる場合 (直接アクセス/リロード時) はデータを取得
@@ -49,6 +58,10 @@ export const ResultPage: React.FC = () => {
     }, {});
   }, [ingredients]);
 
+  const handleGoToTop = () => {
+    navigate('/');
+  };
+
   if (isLoading) {
     return <div className={styles.status}>読み込んでいます...</div>;
   }
@@ -57,57 +70,64 @@ export const ResultPage: React.FC = () => {
     return <div className={styles.statusError}>{error} <Link to="/">トップに戻る</Link></div>;
   }
   
-  if (!planIdFromContext && !isLoading) {
-      return <div className={styles.status}>計画が見つかりません。 <Link to="/">トップページから計画を作成してください。</Link></div>
-  }
+  // if (!planIdFromContext && !isLoading) {
+  //     return <div className={styles.status}>計画が見つかりません。 <Link to="/">トップページから計画を作成してください。</Link></div>
+  // }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>あなたの献立</h2>
-        {Object.entries(groupedMeals).map(([date, dailyMeals]) => (
-          <div key={date} className={styles.dateGroup}>
-            <h3 className={styles.dateHeader}>{formatToJapaneseDate(date)}</h3>
-            {dailyMeals.map((meal, index) => (
-              <div key={index} className={styles.mealCard}>
-                <p className={styles.mealPeriod}>{meal.meal_period === 'MORNING' ? '朝' : meal.meal_period === 'LUNCH' ? '昼' : '夜'}ごはん</p>
-                <p className={styles.menuName}>{meal.menu_name}</p>
-                <ul className={styles.mealIngredients}>
-                  {meal.ingredients.map((ing, i) => (
-                    <li key={i}>{ing.name} ({ing.amount}{ing.unit})</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>買い物リスト</h2>
-        <div className={styles.ingredientList}>
-          {/* グループ化されたオブジェクトを元に描画 */}
-          {Object.entries(groupedIngredients).map(([type, items]) => (
-            <div key={type} className={styles.ingredientGroup}>
-              <h3 className={styles.ingredientTypeTitle}>{type}</h3>
-              <div className={styles.ingredientItems}>
-                {items.map((ingredient) => (
-                  <Checkbox
-                    key={ingredient.id}
-                    label={
-                      <span className={ingredient.bought ? styles.boughtItem : ''}>
-                        {ingredient.name} ({ingredient.amount}{ingredient.unit})
-                      </span>
-                    }
-                    checked={ingredient.bought}
-                    onChange={() => toggleIngredientBought(ingredient.id, ingredient.bought)}
-                  />
-                ))}
-              </div>
+    <>
+      <div className={styles.container}>
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>あなたの献立</h2>
+          {Object.entries(groupedMeals).map(([date, dailyMeals]) => (
+            <div key={date} className={styles.dateGroup}>
+              <h3 className={styles.dateHeader}>{formatToJapaneseDate(date)}</h3>
+              {dailyMeals.map((meal, index) => (
+                <div key={index} className={styles.mealCard}>
+                  <p className={styles.mealPeriod}>{meal.meal_period === 'MORNING' ? '朝' : meal.meal_period === 'LUNCH' ? '昼' : '夜'}ごはん</p>
+                  <p className={styles.menuName}>{meal.menu_name}</p>
+                  <ul className={styles.mealIngredients}>
+                    {meal.ingredients.map((ing, i) => (
+                      <li key={i}>{ing.name} ({ing.amount}{ing.unit})</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           ))}
         </div>
+
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>買い物リスト</h2>
+          <div className={styles.ingredientList}>
+            {Object.entries(groupedIngredients).map(([type, items]) => (
+              <div key={type} className={styles.ingredientGroup}>
+                <h3 className={styles.ingredientTypeTitle}>{type}</h3>
+                <div className={styles.ingredientItems}>
+                  {items.map((ingredient) => (
+                    <Checkbox
+                      key={ingredient.id}
+                      label={
+                        <span className={ingredient.bought ? styles.boughtItem : ''}>
+                          {ingredient.name} ({ingredient.amount}{ingredient.unit})
+                        </span>
+                      }
+                      checked={ingredient.bought}
+                      onChange={() => toggleIngredientBought(ingredient.id, ingredient.bought)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+      
+      <div className={styles.backButtonContainer}>
+        <Button onClick={handleGoToTop}>
+          別の計画を立てる
+        </Button>
+      </div>
+    </>
   );
 };

@@ -12,6 +12,7 @@ export interface ShoppingPlanContextType {
   createPlan: (plannedMeals: CreateShoppingPlanRequest['planned_meals']) => Promise<void>;
   fetchPlanData: (planId: string) => Promise<void>;
   toggleIngredientBought: (itemId: string, currentStatus: boolean) => Promise<void>;
+  clearPlan: () => void;
 }
 
 // Contextオブジェクトの作成 (非公開)
@@ -26,7 +27,16 @@ export const ShoppingPlanProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const clearPlan = useCallback(() => {
+    setShoppingPlanId(null);
+    setMeals([]);
+    setIngredients([]);
+    setError(null);
+    // isLoadingはリセット不要な場合が多い
+  }, []);
+
   const createPlan = useCallback(async (plannedMeals: CreateShoppingPlanRequest['planned_meals']) => {
+    clearPlan();
     setIsLoading(true);
     setError(null);
     try {
@@ -40,7 +50,7 @@ export const ShoppingPlanProvider: React.FC<{ children: ReactNode }> = ({ childr
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [clearPlan]);
 
   const fetchPlanData = useCallback(async (planId: string) => {
     setIsLoading(true);
@@ -86,6 +96,7 @@ export const ShoppingPlanProvider: React.FC<{ children: ReactNode }> = ({ childr
     createPlan,
     fetchPlanData,
     toggleIngredientBought,
+    clearPlan,
   };
 
   return (
